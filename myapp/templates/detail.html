@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-6">
+        {{ p.title }}<br>
+        {{ p.description }}<br>
+        <img src = "{{ p.image.url }}" width = "200" height = "200">
+    </div>
+
+    <div class="col-6">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+
+<span id="like">{{ p.likes }}</span><button onclick="onClick()"><i class="fas fa-heart"></i></button>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    function onClick(){
+        likes = document.getElementById('like').innerHTML
+        $.ajax({
+        url:"{% url 'like' %}",
+        data:{'likes':likes,'post':{{ p.id}}},
+        success:function(data){
+            document.getElementById('like').innerHTML = data.likes
+        }
+        })
+    }
+</script>
+
+
+<div>
+    <br><br><br>
+    <h5>Comments:</h5>
+    {% for i in comments %}
+        {{ forloop.counter }} - {{ i.comment }}<br>
+        at {{ i.created_at }} by {{ i.user }}<br>
+    {% endfor %}
+</div>
+{% endblock %}
+
